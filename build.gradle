@@ -1,6 +1,9 @@
 plugins {
     id 'java'
+    id 'maven-publish'
 }
+
+version = project.version;
 
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(java_version)
@@ -41,4 +44,22 @@ processResources {
         expand expandProps
     }
     inputs.properties(expandProps)
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+
+    repositories {
+        maven() {
+            url = "https://maven.hytale-modding.info/releases"
+            credentials {
+                username = providers.environmentVariable("HT_MAVEN_USERNAME").get()
+                password = providers.environmentVariable("HT_MAVEN_PASSWORD").get()
+            }
+        }
+    }
 }
