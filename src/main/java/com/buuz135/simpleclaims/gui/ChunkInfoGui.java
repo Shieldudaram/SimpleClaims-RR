@@ -1,15 +1,18 @@
 package com.buuz135.simpleclaims.gui;
 
 import com.buuz135.simpleclaims.claim.ClaimManager;
+import com.buuz135.simpleclaims.util.MessageHelper;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.protocol.CustomPageLifetime;
+import com.hypixel.hytale.protocol.CustomUIEventBindingType;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.asset.util.ColorParseUtil;
 import com.hypixel.hytale.server.core.entity.entities.player.pages.InteractiveCustomUIPage;
+import com.hypixel.hytale.server.core.ui.builder.EventData;
 import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder;
 import com.hypixel.hytale.server.core.ui.builder.UIEventBuilder;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
@@ -35,7 +38,37 @@ public class ChunkInfoGui extends InteractiveCustomUIPage<ChunkInfoGui.ChunkInfo
     @Override
     public void handleDataEvent(@NonNullDecl Ref<EntityStore> ref, @NonNullDecl Store<EntityStore> store, @NonNullDecl ChunkInfoData data) {
         super.handleDataEvent(ref, store, data);
-
+        if (data.action != null){
+            var player = store.getComponent(ref, PlayerRef.getComponentType());
+            var playerParty = ClaimManager.getInstance().getPartyFromPlayer(player.getUuid());
+            if (playerParty == null){
+                this.sendUpdate();
+                return;
+            }
+            var actions = data.action.split(":");
+            var button = actions[0];
+            var x = Integer.parseInt(actions[1]);
+            var z = Integer.parseInt(actions[2]);
+            if (button.equals("LeftClicking")) {
+                var chunk = ClaimManager.getInstance().getChunk(dimension, x, z);
+                if (chunk == null && ClaimManager.getInstance().hasEnoughClaimsLeft(playerParty)) {
+                    ClaimManager.getInstance().claimChunkBy(dimension, x, z, playerParty);
+                    ClaimManager.getInstance().markDirty();
+                }
+            }
+            if (button.equals("RightClicking")) {
+                var chunk = ClaimManager.getInstance().getChunk(dimension, x, z);
+                if (chunk != null && chunk.getPartyOwner().equals(playerParty.getId())) {
+                    ClaimManager.getInstance().unclaim(dimension, x, z);
+                    ClaimManager.getInstance().markDirty();
+                }
+            }
+            UICommandBuilder commandBuilder = new UICommandBuilder();
+            UIEventBuilder eventBuilder = new UIEventBuilder();
+            this.build(ref, commandBuilder, eventBuilder, store);
+            this.sendUpdate(commandBuilder, eventBuilder, true);
+            return;
+        }
         this.sendUpdate();
     }
 
@@ -44,6 +77,11 @@ public class ChunkInfoGui extends InteractiveCustomUIPage<ChunkInfoGui.ChunkInfo
         uiCommandBuilder.append("Pages/ChunkVisualizer.ui");
         var player = store.getComponent(ref, PlayerRef.getComponentType());
         var playerParty = ClaimManager.getInstance().getPartyFromPlayer(player.getUuid());
+
+        uiCommandBuilder.set("#ClaimedChunksInfo #ClaimedChunksCount.Text", ClaimManager.getInstance().getAmountOfClaims(playerParty)+ "");
+        uiCommandBuilder.set("#ClaimedChunksInfo #MaxChunksCount.Text", playerParty.getMaxClaimAmount() + "");
+
+        var hytaleGold = "#93844c";
         for (int z = 0; z <= 8*2; z++) {
             uiCommandBuilder.appendInline("#ChunkCards", "Group { LayoutMode: Left; Anchor: (Bottom: 0); }");
             for (int x = 0; x <= 8*2; x++) {
@@ -57,48 +95,44 @@ public class ChunkInfoGui extends InteractiveCustomUIPage<ChunkInfoGui.ChunkInfo
                     if (partyInfo != null) {
                         var color = new Color(partyInfo.getColor());
                         color = new Color(color.getRed(), color.getGreen(), color.getBlue(), 128);
-                        var messageList = new ArrayList<>();
-                        messageList.add(Message.raw("Found <color is='#a020f0'><b>Cursed</b></color> items are lost on <color is='#9e0b0b'><b>Death</b></color>"));
                         uiCommandBuilder.set("#ChunkCards[" + z + "][" + x + "].Background.Color", ColorParseUtil.colorToHexAlpha(color));
                         uiCommandBuilder.set("#ChunkCards[" + z + "][" + x + "].OutlineColor", ColorParseUtil.colorToHexAlpha(color));
                         uiCommandBuilder.set("#ChunkCards[" + z + "][" + x + "].OutlineSize", 1);
-                        //uiCommandBuilder.set("#ChunkCards[" + z + "][" + x + "].TooltipTextSpans", "Found <color is='#a020f0'><b>Cursed</b></color> items are lost on <color is='#9e0b0b'><b>Death</b></color>");
-                        var tooltipLines = "Owner: " + partyInfo.getName() + "\nDescription: " + partyInfo.getDescription() ;
+                        var tooltip = MessageHelper.multiLine()
+                                .append(Message.raw("Owner: ").bold(true).color(hytaleGold))
+                                .append(Message.raw(partyInfo.getName())).nl()
+                                .append(Message.raw("Description: ").bold(true).color(hytaleGold))
+                                .append(Message.raw(partyInfo.getDescription()));
                         if (playerParty != null && playerParty.getId().equals(partyInfo.getId())) {
-                            tooltipLines += "\n\n*Right Click to Unclaim*";
+                            tooltip = tooltip.nl().nl().append(Message.raw("*Right Click to Unclaim*").bold(true).color(Color.RED.darker().darker()));
                         }
-                        uiCommandBuilder.set("#ChunkCards[" + z + "][" + x + "].TooltipText", tooltipLines);
+                        uiCommandBuilder.set("#ChunkCards[" + z + "][" + x + "].TooltipTextSpans", tooltip.build());
+                        uiEventBuilder.addEventBinding(CustomUIEventBindingType.RightClicking, "#ChunkCards[" + z + "][" + x + "]", EventData.of("Action", "RightClicking:" + (chunkX + x - 8) + ":" + (chunkZ + z - 8)));
                     }
                 } else {
-                    var tooltipLines = "Wilderness" ;
+                    var tooltip = MessageHelper.multiLine().append(Message.raw("Wilderness" ).bold(true).color(Color.GREEN.darker()));
                     if (playerParty != null) {
-                        tooltipLines += "\n\n*Left Click to claim*";
+                        tooltip = tooltip.nl().nl().append(Message.raw("*Left Click to claim*").bold(true).color(Color.GRAY));
+                        uiEventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#ChunkCards[" + z + "][" + x + "]", EventData.of("Action", "LeftClicking:" + (chunkX + x - 8) + ":" + (chunkZ + z - 8)));
+                    } else {
+                        tooltip = tooltip.nl().nl().append(Message.raw("*Create a party to claim*").bold(true).color(Color.GRAY));
                     }
-                    uiCommandBuilder.set("#ChunkCards[" + z + "][" + x + "].TooltipText", tooltipLines);
+                    uiCommandBuilder.set("#ChunkCards[" + z + "][" + x + "].TooltipTextSpans", tooltip.build());
                 }
             }
         }
     }
 
     public static class ChunkInfoData {
-        static final String KEY_NAME = "@Name";
-        static final String KEY_DESCRIPTION = "@Description";
-        static final String KEY_SAVE = "Save";
-        static final String KEY_CANCEL = "Cancel";
-        static final String KEY_REMOVE_BUTTON_ACTION = "RemoveButtonAction";
+        static final String KEY_ACTION = "Action";
+
+
         public static final BuilderCodec<ChunkInfoData> CODEC = BuilderCodec.<ChunkInfoData>builder(ChunkInfoData.class, ChunkInfoData::new)
-                .addField(new KeyedCodec<>(KEY_NAME, Codec.STRING), (searchGuiData, s) -> searchGuiData.name = s, searchGuiData -> searchGuiData.name)
-                .addField(new KeyedCodec<>(KEY_DESCRIPTION, Codec.STRING), (searchGuiData, s) -> searchGuiData.description = s, searchGuiData -> searchGuiData.description)
-                .addField(new KeyedCodec<>(KEY_SAVE, Codec.STRING), (searchGuiData, s) -> searchGuiData.save = s, searchGuiData -> searchGuiData.save)
-                .addField(new KeyedCodec<>(KEY_CANCEL, Codec.STRING), (searchGuiData, s) -> searchGuiData.cancel = s, searchGuiData -> searchGuiData.cancel)
-                .addField(new KeyedCodec<>(KEY_REMOVE_BUTTON_ACTION, Codec.STRING), (searchGuiData, s) -> searchGuiData.removeButtonAction = s, searchGuiData -> searchGuiData.removeButtonAction)
+                .addField(new KeyedCodec<>(KEY_ACTION, Codec.STRING), (searchGuiData, s) -> searchGuiData.action = s, searchGuiData -> searchGuiData.action)
 
                 .build();
 
-        private String name;
-        private String description;
-        private String save;
-        private String cancel;
-        private String removeButtonAction;
+        private String action;
+
     }
 }

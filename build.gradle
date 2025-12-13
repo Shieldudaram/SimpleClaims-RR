@@ -52,14 +52,16 @@ publishing {
             from components.java
         }
     }
-
-    repositories {
-        maven() {
-            url = "https://maven.hytale-modding.info/releases"
-            credentials {
-                username = providers.environmentVariable("HT_MAVEN_USERNAME").get()
-                password = providers.environmentVariable("HT_MAVEN_PASSWORD").get()
+    if (providers.environmentVariable("HT_MAVEN_USERNAME").present) {
+        repositories {
+            maven() {
+                url = "https://maven.hytale-modding.info/releases"
+                credentials {
+                    username = providers.environmentVariable("HT_MAVEN_USERNAME").get()
+                    password = providers.environmentVariable("HT_MAVEN_PASSWORD").get()
+                }
             }
         }
     }
+
 }

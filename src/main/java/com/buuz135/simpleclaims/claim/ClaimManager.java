@@ -64,6 +64,7 @@ public class ClaimManager {
     }
 
     public void markDirty() {
+        //TODO MULITPLE THREADS
         new Thread(() -> {
             FileUtils.ensureMainDirectory();
 
@@ -141,8 +142,8 @@ public class ClaimManager {
     }
 
     @Nullable
-    public ChunkInfo getChunkRawCoords(String dimension, int chunkX, int chunkZ){
-        return this.getChunk(dimension, ChunkUtil.chunkCoordinate(chunkX), ChunkUtil.chunkCoordinate(chunkZ));
+    public ChunkInfo getChunkRawCoords(String dimension, int blockX, int blockZ){
+        return this.getChunk(dimension, ChunkUtil.chunkCoordinate(blockX), ChunkUtil.chunkCoordinate(blockZ));
     }
 
     public void claimChunkBy(String dimension, int chunkX, int chunkZ, PartyInfo partyInfo){
@@ -152,8 +153,8 @@ public class ClaimManager {
         this.markDirty();
     }
 
-    public void claimChunkByWithRawCoords(String dimension, int chunkX, int chunkZ, PartyInfo partyInfo){
-        this.claimChunkBy(dimension, ChunkUtil.chunkCoordinate(chunkX), ChunkUtil.chunkCoordinate(chunkZ), partyInfo);
+    public void claimChunkByRawCoords(String dimension, int blockX, int blockZ, PartyInfo partyInfo){
+        this.claimChunkBy(dimension, ChunkUtil.chunkCoordinate(blockX), ChunkUtil.chunkCoordinate(blockZ), partyInfo);
     }
 
     public boolean hasEnoughClaimsLeft(PartyInfo partyInfo){
@@ -177,6 +178,14 @@ public class ClaimManager {
             }
         }
         return currentAmount;
+    }
+
+    public void unclaim(String dimension, int chunkX, int chunkZ){
+        this.chunks.computeIfAbsent(dimension, k -> new HashMap<>()).remove(ChunkInfo.formatCoordinates(chunkX, chunkZ));
+    }
+
+    public void unclaimRawCoords(String dimension, int blockX, int blockZ){
+        this.unclaim(dimension, ChunkUtil.chunkCoordinate(blockX), ChunkUtil.chunkCoordinate(blockZ));
     }
 
     public boolean needsMapUpdate() {

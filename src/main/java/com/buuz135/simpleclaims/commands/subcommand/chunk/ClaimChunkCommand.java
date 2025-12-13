@@ -4,9 +4,9 @@ import com.buuz135.simpleclaims.claim.ClaimManager;
 import com.buuz135.simpleclaims.commands.CommandMessages;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.server.core.command.CommandSender;
-import com.hypixel.hytale.server.core.command.newcmdsystem.CommandContext;
-import com.hypixel.hytale.server.core.command.newcmdsystem.commandtypes.AsyncCommandBase;
+import com.hypixel.hytale.server.core.command.system.CommandContext;
+import com.hypixel.hytale.server.core.command.system.CommandSender;
+import com.hypixel.hytale.server.core.command.system.basecommands.AsyncCommandBase;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
@@ -49,7 +49,7 @@ public class ClaimChunkCommand extends AsyncCommandBase {
                             player.sendMessage(CommandMessages.NOT_ENOUGH_CHUNKS);
                             return;
                         }
-                        ClaimManager.getInstance().claimChunkByWithRawCoords(player.getWorld().getName(), (int) player.getPosition().getX(), (int) player.getPosition().getZ(), party);
+                        ClaimManager.getInstance().claimChunkByRawCoords(player.getWorld().getName(), (int) player.getPosition().getX(), (int) player.getPosition().getZ(), party);
                     }
                 }, world);
             } else {
