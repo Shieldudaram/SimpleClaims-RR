@@ -1,0 +1,92 @@
+package com.buuz135.simpleclaims.gui;
+
+import com.buuz135.simpleclaims.claim.ClaimManager;
+import com.buuz135.simpleclaims.claim.party.PartyInfo;
+import com.hypixel.hytale.codec.Codec;
+import com.hypixel.hytale.codec.KeyedCodec;
+import com.hypixel.hytale.codec.builder.BuilderCodec;
+import com.hypixel.hytale.component.ComponentAccessor;
+import com.hypixel.hytale.component.Ref;
+import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.protocol.CustomPageLifetime;
+import com.hypixel.hytale.protocol.CustomUIEventBindingType;
+import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.entity.entities.player.pages.InteractiveCustomUIPage;
+import com.hypixel.hytale.server.core.ui.builder.EventData;
+import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder;
+import com.hypixel.hytale.server.core.ui.builder.UIEventBuilder;
+import com.hypixel.hytale.server.core.universe.PlayerRef;
+import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
+
+import javax.annotation.Nonnull;
+import java.util.UUID;
+
+public class PartyListGui extends InteractiveCustomUIPage<PartyListGui.PartyListCodec> {
+
+    private String searchQuery;
+
+    public PartyListGui(@NonNullDecl PlayerRef playerRef) {
+        super(playerRef, CustomPageLifetime.CanDismiss, PartyListCodec.CODEC);
+        this.searchQuery = "";
+    }
+
+    @Override
+    public void handleDataEvent(@NonNullDecl Ref<EntityStore> ref, @NonNullDecl Store<EntityStore> store, @NonNullDecl PartyListCodec data) {
+        super.handleDataEvent(ref, store, data);
+        if (data.searchQuery != null) {
+            this.searchQuery = data.searchQuery;
+            UICommandBuilder commandBuilder = new UICommandBuilder();
+            UIEventBuilder eventBuilder = new UIEventBuilder();
+            buildList(ref, commandBuilder, eventBuilder, store);
+            this.sendUpdate(commandBuilder, eventBuilder, false);
+            return;
+        }
+        if (data.action != null) {
+            var party = ClaimManager.getInstance().getPartyById(UUID.fromString(data.action));
+            if (party != null){
+                var player = store.getComponent(ref, Player.getComponentType());
+                player.getPageManager().openCustomPage(ref, store, new PartyInfoEditGui(playerRef, party, true));
+            }
+            return;
+        }
+        this.sendUpdate();
+    }
+
+    @Override
+    public void build(@NonNullDecl Ref<EntityStore> ref, @NonNullDecl UICommandBuilder uiCommandBuilder, @NonNullDecl UIEventBuilder uiEventBuilder, @NonNullDecl Store<EntityStore> store) {
+        uiCommandBuilder.append("Pages/OpPartyList.ui");
+        uiCommandBuilder.set("#SearchInput.Value", searchQuery);
+        uiEventBuilder.addEventBinding(CustomUIEventBindingType.ValueChanged, "#SearchInput", EventData.of("@SearchQuery", "#SearchInput.Value"), false);
+        buildList(ref, uiCommandBuilder, uiEventBuilder, store);
+    }
+
+    private void buildList(@Nonnull Ref<EntityStore> ref, @Nonnull UICommandBuilder uiCommandBuilder, @Nonnull UIEventBuilder uiEventBuilder, @Nonnull ComponentAccessor<EntityStore> store) {
+        uiCommandBuilder.clear("#PartyCards");
+        uiCommandBuilder.appendInline("#Main #PartyList", "Group #PartyCards { LayoutMode: Left; }");
+        var i = 0;
+        for (PartyInfo value : ClaimManager.getInstance().getParties().values()) {
+            if (!value.getName().toLowerCase().contains(searchQuery.toLowerCase())) continue;
+            uiCommandBuilder.append("#PartyCards", "Pages/OpPartyListEntry.ui");
+            uiCommandBuilder.set("#PartyCards[" + i + "] #PartyName.Text", value.getName());
+            uiEventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#PartyCards[" + i + "] #EditPartyButton", EventData.of("Action", value.getId().toString()), false);
+
+            ++i;
+        }
+    }
+
+    public static class PartyListCodec {
+        static final String KEY_ACTION = "Action";
+        static final String KEY_SEARCH_QUERY = "@SearchQuery";
+
+        public static final BuilderCodec<PartyListCodec> CODEC = BuilderCodec.<PartyListCodec>builder(PartyListCodec.class, PartyListCodec::new)
+                .addField(new KeyedCodec<>(KEY_SEARCH_QUERY, Codec.STRING), (searchGuiData, s) -> searchGuiData.searchQuery = s, searchGuiData -> searchGuiData.searchQuery)
+                .addField(new KeyedCodec<>(KEY_ACTION, Codec.STRING), (searchGuiData, s) -> searchGuiData.action = s, searchGuiData -> searchGuiData.action)
+
+                .build();
+
+        private String action;
+        private String searchQuery;
+
+    }
+}

@@ -5,6 +5,7 @@ import com.buuz135.simpleclaims.gui.ChunkInfoGui;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.math.util.ChunkUtil;
+import com.hypixel.hytale.protocol.GameMode;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.CommandSender;
 import com.hypixel.hytale.server.core.command.system.basecommands.AsyncCommandBase;
@@ -24,6 +25,8 @@ public class SimpleClaimProtectCommand extends AsyncCommandBase {
         super("simpleclaims", "Claim chunk management");
         this.addSubCommand(new ClaimChunkCommand());
         this.addAliases("sc", "sc-chunks", "scc");
+
+        this.setPermissionGroup(GameMode.Adventure);
     }
 
     @NonNullDecl

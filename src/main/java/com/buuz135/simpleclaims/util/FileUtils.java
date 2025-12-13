@@ -1,11 +1,9 @@
-package com.buuz135.simpleclaims;
+package com.buuz135.simpleclaims.util;
 
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.ExtraInfo;
 import com.hypixel.hytale.common.util.PathUtil;
 import com.hypixel.hytale.logger.HytaleLogger;
-import com.hypixel.hytale.server.core.util.BsonUtil;
-import org.bson.BsonDocument;
 import org.bson.BsonValue;
 import org.bson.json.JsonWriter;
 
@@ -15,9 +13,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.*;
-
-import static com.hypixel.hytale.server.core.util.BsonUtil.BSON_DOCUMENT_CODEC;
-import static com.hypixel.hytale.server.core.util.BsonUtil.SETTINGS;
 
 public class FileUtils {
 

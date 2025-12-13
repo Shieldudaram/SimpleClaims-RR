@@ -1,6 +1,6 @@
 package com.buuz135.simpleclaims.claim;
 
-import com.buuz135.simpleclaims.FileUtils;
+import com.buuz135.simpleclaims.util.FileUtils;
 import com.buuz135.simpleclaims.claim.chunk.ChunkInfo;
 import com.buuz135.simpleclaims.claim.party.PartyInfo;
 import com.buuz135.simpleclaims.claim.party.PartyInfoStorage;
@@ -248,5 +248,13 @@ public class ClaimManager {
 
     public PlayerNameTracker getPlayerNameTracker() {
         return playerNameTracker;
+    }
+
+    public HashMap<String, PartyInfo> getParties() {
+        return parties;
+    }
+
+    public HashMap<String, HashMap<String, ChunkInfo>> getChunks() {
+        return chunks;
     }
 }

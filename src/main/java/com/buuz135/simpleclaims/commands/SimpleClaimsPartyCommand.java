@@ -2,9 +2,12 @@ package com.buuz135.simpleclaims.commands;
 
 import com.buuz135.simpleclaims.claim.ClaimManager;
 import com.buuz135.simpleclaims.commands.subcommand.party.CreatePartyCommand;
+import com.buuz135.simpleclaims.commands.subcommand.party.op.OpCreatePartyCommand;
+import com.buuz135.simpleclaims.commands.subcommand.party.op.OpPartyListCommand;
 import com.buuz135.simpleclaims.gui.PartyInfoEditGui;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.protocol.GameMode;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.CommandSender;
 import com.hypixel.hytale.server.core.command.system.basecommands.AsyncCommandBase;
@@ -22,8 +25,13 @@ public class SimpleClaimsPartyCommand extends AsyncCommandBase {
 
     public SimpleClaimsPartyCommand() {
         super("simpleclaimsparty", "Simple Claims Party Commands" );
-        this.addSubCommand(new CreatePartyCommand());
         this.addAliases("scp", "sc-party");
+        this.setPermissionGroup(GameMode.Adventure);
+
+        this.addSubCommand(new CreatePartyCommand());
+        //OP Commands
+        this.addSubCommand(new OpCreatePartyCommand());
+        this.addSubCommand(new OpPartyListCommand());
     }
 
     @NonNullDecl
@@ -44,7 +52,7 @@ public class SimpleClaimsPartyCommand extends AsyncCommandBase {
                             commandContext.sendMessage(CommandMessages.NOT_IN_A_PARTY);
                             return;
                         }
-                        player.getPageManager().openCustomPage(ref, store, new PartyInfoEditGui(playerRefComponent, party));
+                        player.getPageManager().openCustomPage(ref, store, new PartyInfoEditGui(playerRefComponent, party, false));
                     }
                 }, world);
             } else {

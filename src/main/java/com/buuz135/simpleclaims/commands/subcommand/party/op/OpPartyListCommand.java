@@ -1,12 +1,16 @@
-package com.buuz135.simpleclaims.commands.subcommand.party;
+package com.buuz135.simpleclaims.commands.subcommand.party.op;
 
 import com.buuz135.simpleclaims.claim.ClaimManager;
 import com.buuz135.simpleclaims.commands.CommandMessages;
 import com.buuz135.simpleclaims.gui.PartyInfoEditGui;
+import com.buuz135.simpleclaims.gui.PartyListGui;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.protocol.GameMode;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.CommandSender;
+import com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg;
+import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes;
 import com.hypixel.hytale.server.core.command.system.basecommands.AsyncCommandBase;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
@@ -18,11 +22,11 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.hypixel.hytale.server.core.command.commands.player.inventory.InventorySeeCommand.MESSAGE_COMMANDS_ERRORS_PLAYER_NOT_IN_WORLD;
 
-public class CreatePartyCommand extends AsyncCommandBase {
+public class OpPartyListCommand extends AsyncCommandBase {
 
-
-    public CreatePartyCommand() {
-        super("create", "Creates a new party");
+    public OpPartyListCommand() {
+        super("op-edit-party", "Shows all the parties and allows you to edit them");
+        this.setPermissionGroup(GameMode.Creative);
     }
 
     @NonNullDecl
@@ -37,14 +41,7 @@ public class CreatePartyCommand extends AsyncCommandBase {
                 return CompletableFuture.runAsync(() -> {
                     PlayerRef playerRefComponent = store.getComponent(ref, PlayerRef.getComponentType());
                     if (playerRefComponent != null) {
-                        var party = ClaimManager.getInstance().getPartyFromPlayer(player);
-                        if (party != null) {
-                            commandContext.sendMessage(CommandMessages.IN_A_PARTY);
-                            return;
-                        }
-                        party = ClaimManager.getInstance().createParty(player);
-                        player.sendMessage(CommandMessages.PARTY_CREATED);
-                        player.getPageManager().openCustomPage(ref, store, new PartyInfoEditGui(playerRefComponent, party, false));
+                        player.getPageManager().openCustomPage(ref, store, new PartyListGui(playerRefComponent));
                     }
                 }, world);
             } else {

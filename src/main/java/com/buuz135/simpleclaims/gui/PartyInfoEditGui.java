@@ -26,20 +26,22 @@ public class PartyInfoEditGui extends InteractiveCustomUIPage<PartyInfoEditGui.P
     private String name;
     private String description;
     private int requestingConfirmation;
+    private final boolean isOpEdit;
 
-    public PartyInfoEditGui(@NonNullDecl PlayerRef playerRef, PartyInfo info) {
+    public PartyInfoEditGui(@NonNullDecl PlayerRef playerRef, PartyInfo info, boolean isOpEdit) {
         super(playerRef, CustomPageLifetime.CanDismiss, PartyInfoData.CODEC);
         this.info = info;
         this.name = info.getName();
         this.description = info.getDescription();
         this.requestingConfirmation = -1;
+        this.isOpEdit = isOpEdit;
     }
 
     @Override
     public void handleDataEvent(@NonNullDecl Ref<EntityStore> ref, @NonNullDecl Store<EntityStore> store, @NonNullDecl PartyInfoData data) {
         super.handleDataEvent(ref, store, data);
         var player = store.getComponent(ref, PlayerRef.getComponentType());
-        var playerCanModify = this.info.isOwner(player.getUuid());
+        var playerCanModify = this.info.isOwner(player.getUuid()) || this.isOpEdit;
         if (!playerCanModify) {
             UICommandBuilder commandBuilder = new UICommandBuilder();
             UIEventBuilder eventBuilder = new UIEventBuilder();
@@ -101,7 +103,7 @@ public class PartyInfoEditGui extends InteractiveCustomUIPage<PartyInfoEditGui.P
     @Override
     public void build(@NonNullDecl Ref<EntityStore> ref, @NonNullDecl UICommandBuilder uiCommandBuilder, @NonNullDecl UIEventBuilder uiEventBuilder, @NonNullDecl Store<EntityStore> store) {
         var player = store.getComponent(ref, PlayerRef.getComponentType());
-        var playerCanModify = this.info.isOwner(player.getUuid());
+        var playerCanModify = this.info.isOwner(player.getUuid()) || this.isOpEdit;
         uiCommandBuilder.append("Pages/SimpleClaimsEditParty.ui");
         uiCommandBuilder.set("#PartyInfo #PartyNameField.Value", this.info.getName());
         uiCommandBuilder.set("#PartyInfo #PartyNameField.IsReadOnly", !playerCanModify);
