@@ -104,7 +104,7 @@ public class PartyInfoEditGui extends InteractiveCustomUIPage<PartyInfoEditGui.P
     public void build(@NonNullDecl Ref<EntityStore> ref, @NonNullDecl UICommandBuilder uiCommandBuilder, @NonNullDecl UIEventBuilder uiEventBuilder, @NonNullDecl Store<EntityStore> store) {
         var player = store.getComponent(ref, PlayerRef.getComponentType());
         var playerCanModify = this.info.isOwner(player.getUuid()) || this.isOpEdit;
-        uiCommandBuilder.append("Pages/SimpleClaimsEditParty.ui");
+        uiCommandBuilder.append("Pages/Buuz135_SimpleClaims_EditParty.ui");
         uiCommandBuilder.set("#PartyInfo #PartyNameField.Value", this.info.getName());
         uiCommandBuilder.set("#PartyInfo #PartyNameField.IsReadOnly", !playerCanModify);
         uiEventBuilder.addEventBinding(CustomUIEventBindingType.ValueChanged, "#PartyNameField", EventData.of("@Name", "#PartyNameField.Value"), false);
@@ -112,7 +112,7 @@ public class PartyInfoEditGui extends InteractiveCustomUIPage<PartyInfoEditGui.P
         uiCommandBuilder.set("#PartyInfo #PartyDescriptionField.IsReadOnly", !playerCanModify);
         uiEventBuilder.addEventBinding(CustomUIEventBindingType.ValueChanged, "#PartyDescriptionField", EventData.of("@Description", "#PartyDescriptionField.Value"), false);
         for (int i = 0; i < this.info.getMembers().length; i++) {
-            uiCommandBuilder.append("#MemberEntries", "Pages/PartyMemberListEntry.ui");
+            uiCommandBuilder.append("#MemberEntries", "Pages/Buuz135_SimpleClaims_PartyMemberListEntry.ui");
             var isOwner = this.info.isOwner(this.info.getMembers()[i]);
             uiCommandBuilder.set("#MemberEntries[" + i + "] #MemberName.Text", ClaimManager.getInstance().getPlayerNameTracker().getPlayerName(this.info.getMembers()[i]));
             uiCommandBuilder.set("#MemberEntries[" + i + "] #MemberRole.Text", isOwner ? "Owner" : "Member");

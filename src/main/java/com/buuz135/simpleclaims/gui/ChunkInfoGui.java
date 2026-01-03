@@ -84,7 +84,7 @@ public class ChunkInfoGui extends InteractiveCustomUIPage<ChunkInfoGui.ChunkInfo
 
     @Override
     public void build(@NonNullDecl Ref<EntityStore> ref, @NonNullDecl UICommandBuilder uiCommandBuilder, @NonNullDecl UIEventBuilder uiEventBuilder, @NonNullDecl Store<EntityStore> store) {
-        uiCommandBuilder.append("Pages/ChunkVisualizer.ui");
+        uiCommandBuilder.append("Pages/Buuz135_SimpleClaims_ChunkVisualizer.ui");
         var player = store.getComponent(ref, PlayerRef.getComponentType());
         var playerParty = ClaimManager.getInstance().getPartyFromPlayer(player.getUuid());
 
@@ -95,7 +95,7 @@ public class ChunkInfoGui extends InteractiveCustomUIPage<ChunkInfoGui.ChunkInfo
         for (int z = 0; z <= 8*2; z++) {
             uiCommandBuilder.appendInline("#ChunkCards", "Group { LayoutMode: Left; Anchor: (Bottom: 0); }");
             for (int x = 0; x <= 8*2; x++) {
-                uiCommandBuilder.append("#ChunkCards[" + z  + "]", "Pages/ChunkEntry.ui");
+                uiCommandBuilder.append("#ChunkCards[" + z  + "]", "Pages/Buuz135_SimpleClaims_ChunkEntry.ui");
                 var chunk = ClaimManager.getInstance().getChunk(dimension, chunkX + x - 8, chunkZ + z - 8);
                 if ((z - 8) == 0 && (x - 8) == 0) {
                     uiCommandBuilder.set("#ChunkCards[" + z + "][" + x + "].Text", "+");

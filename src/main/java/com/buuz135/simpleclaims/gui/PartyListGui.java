@@ -68,7 +68,7 @@ public class PartyListGui extends InteractiveCustomUIPage<PartyListGui.PartyList
 
     @Override
     public void build(@NonNullDecl Ref<EntityStore> ref, @NonNullDecl UICommandBuilder uiCommandBuilder, @NonNullDecl UIEventBuilder uiEventBuilder, @NonNullDecl Store<EntityStore> store) {
-        uiCommandBuilder.append("Pages/OpPartyList.ui");
+        uiCommandBuilder.append("Pages/Buuz135_SimpleClaims_OpPartyList.ui");
         uiCommandBuilder.set("#SearchInput.Value", searchQuery);
         uiEventBuilder.addEventBinding(CustomUIEventBindingType.ValueChanged, "#SearchInput", EventData.of("@SearchQuery", "#SearchInput.Value"), false);
         buildList(ref, uiCommandBuilder, uiEventBuilder, store);
@@ -80,7 +80,7 @@ public class PartyListGui extends InteractiveCustomUIPage<PartyListGui.PartyList
         var i = 0;
         for (PartyInfo value : ClaimManager.getInstance().getParties().values()) {
             if (!value.getName().toLowerCase().contains(searchQuery.toLowerCase())) continue;
-            uiCommandBuilder.append("#PartyCards", "Pages/OpPartyListEntry.ui");
+            uiCommandBuilder.append("#PartyCards", "Pages/Buuz135_SimpleClaims_OpPartyListEntry.ui");
             uiCommandBuilder.set("#PartyCards[" + i + "] #PartyName.Text", value.getName());
             uiEventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#PartyCards[" + i + "] #EditPartyButton", EventData.of("Action", "Edit:" + value.getId().toString()), false);
             uiEventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#PartyCards[" + i + "] #UsePartyButton", EventData.of("Action", "Use:" + value.getId().toString()), false);
