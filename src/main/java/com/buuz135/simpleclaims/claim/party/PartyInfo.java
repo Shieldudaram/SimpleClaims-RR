@@ -1,6 +1,7 @@
 package com.buuz135.simpleclaims.claim.party;
 
 import com.buuz135.simpleclaims.Main;
+import com.buuz135.simpleclaims.claim.ClaimManager;
 import com.buuz135.simpleclaims.claim.tracking.ModifiedTracking;
 
 import javax.annotation.Nullable;
@@ -122,6 +123,7 @@ public class PartyInfo {
 
     public void removeMember(UUID uuid){
         memberSet.remove(uuid);
+        ClaimManager.getInstance().getPlayerToParty().remove(uuid);
     }
 
     public int getMaxClaimAmount(){

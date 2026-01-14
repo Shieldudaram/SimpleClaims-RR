@@ -1,3 +1,7 @@
+# 1.0.9
+
+* Fixed players not being removed from the player to party cache when kicked from a party
+
 # 1.0.7 & 1.0.8
 
 * Fixed F key pickup not being protected in claimed chunks

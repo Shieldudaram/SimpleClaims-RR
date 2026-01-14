@@ -371,4 +371,8 @@ public class ClaimManager {
     public HashMap<String, LongSet> getMapUpdateQueue() {
         return mapUpdateQueue;
     }
+
+    public Map<UUID, UUID> getPlayerToParty() {
+        return playerToParty;
+    }
 }
