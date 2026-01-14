@@ -58,7 +58,7 @@ public class ChunkInfoGui extends InteractiveCustomUIPage<ChunkInfoGui.ChunkInfo
             var z = Integer.parseInt(actions[2]);
             if (button.equals("LeftClicking")) {
                 if (isOp) {
-                    var selectedPartyID = ClaimManager.getInstance().getAdminUsageParty().getOrDefault(playerRef.getUuid().toString(), null);
+                    var selectedPartyID = ClaimManager.getInstance().getAdminUsageParty().get(playerRef.getUuid());
                     if (selectedPartyID == null) {
                         playerInstance.sendMessage(CommandMessages.ADMIN_PARTY_NOT_SELECTED);
                         this.sendUpdate();
@@ -86,7 +86,7 @@ public class ChunkInfoGui extends InteractiveCustomUIPage<ChunkInfoGui.ChunkInfo
             if (button.equals("RightClicking")) {
                 if (isOp) {
                     var chunk = ClaimManager.getInstance().getChunk(dimension, x, z);
-                    var selectedPartyID = ClaimManager.getInstance().getAdminUsageParty().getOrDefault(playerRef.getUuid().toString(), null);
+                    var selectedPartyID = ClaimManager.getInstance().getAdminUsageParty().get(playerRef.getUuid());
                     if (selectedPartyID == null) {
                         playerInstance.sendMessage(CommandMessages.ADMIN_PARTY_NOT_SELECTED);
                         this.sendUpdate();
@@ -122,7 +122,7 @@ public class ChunkInfoGui extends InteractiveCustomUIPage<ChunkInfoGui.ChunkInfo
         var player = store.getComponent(ref, PlayerRef.getComponentType());
         var playerParty = ClaimManager.getInstance().getPartyFromPlayer(player.getUuid());
         if (isOp) {
-            var selectedPartyID = ClaimManager.getInstance().getAdminUsageParty().getOrDefault(playerRef.getUuid().toString(), null);
+            var selectedPartyID = ClaimManager.getInstance().getAdminUsageParty().get(playerRef.getUuid());
             if (selectedPartyID != null) {
                 playerParty = ClaimManager.getInstance().getPartyById(selectedPartyID);
             }

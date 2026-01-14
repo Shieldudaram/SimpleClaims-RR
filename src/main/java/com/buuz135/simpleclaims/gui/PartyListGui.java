@@ -57,7 +57,7 @@ public class PartyListGui extends InteractiveCustomUIPage<PartyListGui.PartyList
             if (split[0].equals("Use")){
                 var party = ClaimManager.getInstance().getPartyById(UUID.fromString(split[1]));
                 if (party != null){
-                    ClaimManager.getInstance().getAdminUsageParty().put(playerRef.getUuid().toString(), UUID.fromString(split[1]));
+                    ClaimManager.getInstance().getAdminUsageParty().put(playerRef.getUuid(), UUID.fromString(split[1]));
                     playerRef.sendMessage(Message.join(CommandMessages.NOW_USING_PARTY, Message.raw(party.getName())));
                     return;
                 }

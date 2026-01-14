@@ -37,7 +37,7 @@ public class OpClaimChunkCommand extends AbstractAsyncCommand {
                 return CompletableFuture.runAsync(() -> {
                     PlayerRef playerRef = ref.getStore().getComponent(ref, PlayerRef.getComponentType());
                     if (playerRef == null) return;
-                    var selectedPartyID = ClaimManager.getInstance().getAdminUsageParty().getOrDefault(playerRef.getUuid().toString(), null);
+                    var selectedPartyID = ClaimManager.getInstance().getAdminUsageParty().get(playerRef.getUuid());
                     if (selectedPartyID == null) {
                         player.sendMessage(CommandMessages.ADMIN_PARTY_NOT_SELECTED);
                         return;

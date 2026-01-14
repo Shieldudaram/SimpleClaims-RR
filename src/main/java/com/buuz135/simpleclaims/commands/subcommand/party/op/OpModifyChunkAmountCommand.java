@@ -44,7 +44,7 @@ public class OpModifyChunkAmountCommand extends AbstractAsyncCommand {
                 return CompletableFuture.runAsync(() -> {
                     PlayerRef playerRef = store.getComponent(ref, PlayerRef.getComponentType());
                     if (playerRef != null) {
-                        var selectedPartyID = ClaimManager.getInstance().getAdminUsageParty().getOrDefault(playerRef.getUuid().toString(), null);
+                        var selectedPartyID = ClaimManager.getInstance().getAdminUsageParty().get(playerRef.getUuid());
                         if (selectedPartyID == null) {
                             player.sendMessage(CommandMessages.ADMIN_PARTY_NOT_SELECTED);
                             return;
