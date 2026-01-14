@@ -49,8 +49,6 @@ public class Main extends JavaPlugin {
     @Override
     protected void setup() {
         super.setup();
-        CONFIG.save();
-
         this.getEntityStoreRegistry().registerSystem(new BreakBlockEventSystem());
         this.getEntityStoreRegistry().registerSystem(new PlaceBlockEventSystem());
         this.getEntityStoreRegistry().registerSystem(new InteractEventSystem());
