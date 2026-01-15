@@ -1,3 +1,7 @@
+# 1.0.10
+
+* Fixed Map Ticking task running off thread when checking for components, closes #18
+
 # 1.0.9
 
 * Fixed players not being removed from the player to party cache when kicked from a party
