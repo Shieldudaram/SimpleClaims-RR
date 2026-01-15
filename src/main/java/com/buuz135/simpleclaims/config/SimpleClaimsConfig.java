@@ -28,6 +28,9 @@ public class SimpleClaimsConfig {
             .append(new KeyedCodec<Boolean>("DefaultPartyPVPEnabled", Codec.BOOLEAN),
                     (simpleClaimsConfig, value, extraInfo) -> simpleClaimsConfig.DefaultPartyPVPEnabled = value,
                     (simpleClaimsConfig, extraInfo) -> simpleClaimsConfig.DefaultPartyPVPEnabled).add()
+            .append(new KeyedCodec<Boolean>("AllowPartyPVPSetting", Codec.BOOLEAN),
+                    (simpleClaimsConfig, value, extraInfo) -> simpleClaimsConfig.AllowPartyPVPSetting = value,
+                    (simpleClaimsConfig, extraInfo) -> simpleClaimsConfig.AllowPartyPVPSetting).add()
             .build();
 
     private int DefaultPartyClaimsAmount = 25;
@@ -35,6 +38,7 @@ public class SimpleClaimsConfig {
     private boolean DefaultPartyBlockBreakEnabled = false;
     private boolean DefaultPartyBlockInteractEnabled = false;
     private boolean DefaultPartyPVPEnabled = false;
+    private boolean AllowPartyPVPSetting = true;
 
     private boolean ForceSimpleClaimsChunkWorldMap = true;
     private boolean CreativeModeBypassProtection = false;
@@ -69,5 +73,9 @@ public class SimpleClaimsConfig {
 
     public boolean isDefaultPartyPVPEnabled() {
         return DefaultPartyPVPEnabled;
+    }
+
+    public boolean isAllowPartyPVPSetting() {
+        return AllowPartyPVPSetting;
     }
 }
