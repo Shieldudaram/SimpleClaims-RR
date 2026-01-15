@@ -1,6 +1,7 @@
 # 1.0.12
 
 * Changed custom map to use the default map settings, closes #37
+* Changed block break event system to use DamageBlockEvent instead of BreakBlockEvent, closes #27
 
 # 1.0.11
 
