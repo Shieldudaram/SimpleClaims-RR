@@ -1,5 +1,6 @@
 package com.buuz135.simpleclaims.systems.events;
 
+import com.buuz135.simpleclaims.Main;
 import com.buuz135.simpleclaims.claim.ClaimManager;
 import com.buuz135.simpleclaims.claim.party.PartyInfo;
 import com.hypixel.hytale.component.ArchetypeChunk;
@@ -37,6 +38,11 @@ public class InteractEventSystem extends EntityEventSystem<EntityStore, UseBlock
         PlayerRef playerRef = store.getComponent(ref, PlayerRef.getComponentType());
         Predicate<PartyInfo> defaultInteract = PartyInfo::isBlockInteractEnabled;
         var blockName = event.getBlockType().getId().toLowerCase(Locale.ROOT);
+
+        for (String blocksThatIgnoreInteractRestriction : Main.CONFIG.get().getBlocksThatIgnoreInteractRestrictions()) {
+            if (blockName.contains(blocksThatIgnoreInteractRestriction.toLowerCase(Locale.ROOT))) return;
+        }
+
         if (blockName.contains("chest")) defaultInteract = PartyInfo::isChestInteractEnabled;
         else if (blockName.contains("bench") && !blockName.contains("furniture"))
             defaultInteract = PartyInfo::isBenchInteractEnabled;

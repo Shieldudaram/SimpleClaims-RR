@@ -93,6 +93,11 @@ public class SimpleClaimsConfig {
             .append(new KeyedCodec<Boolean>("CreativeModeBypassProtection", Codec.BOOLEAN),
                     (simpleClaimsConfig, value, extraInfo) -> simpleClaimsConfig.CreativeModeBypassProtection = value,
                     (simpleClaimsConfig, extraInfo) -> simpleClaimsConfig.CreativeModeBypassProtection).add()
+
+            .append(new KeyedCodec<String[]>("BlocksThatIgnoreInteractRestrictions", Codec.STRING_ARRAY),
+                    (simpleClaimsConfig, value, extraInfo) -> simpleClaimsConfig.BlocksThatIgnoreInteractRestrictions = value,
+                    (simpleClaimsConfig, extraInfo) -> simpleClaimsConfig.BlocksThatIgnoreInteractRestrictions).add()
+
             .build();
 
     private int DefaultPartyClaimsAmount = 25;
@@ -126,6 +131,8 @@ public class SimpleClaimsConfig {
 
     private boolean ForceSimpleClaimsChunkWorldMap = true;
     private boolean CreativeModeBypassProtection = false;
+
+    private String[] BlocksThatIgnoreInteractRestrictions = new String[]{"gravestone"};
 
     public SimpleClaimsConfig() {
 
@@ -241,5 +248,9 @@ public class SimpleClaimsConfig {
 
     public boolean isEnableParticleBorders() {
         return EnableParticleBorders;
+    }
+
+    public String[] getBlocksThatIgnoreInteractRestrictions() {
+        return BlocksThatIgnoreInteractRestrictions;
     }
 }
