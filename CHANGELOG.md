@@ -8,6 +8,7 @@
 * [EXPERIMENTAL - ENABLED ON THE CONFIG] Added a allow entry party setting that stops players from entering a claimed
   chunk if they arent allowed. This is workaround for hytale's interaction bugs #40 #19
 * Added extra precautions for when file loading fails and added backups of those files
+* Added a chunk border system that will show particles when close to an edge of a claimed chunk, closes #79
 
 # 1.0.14
 

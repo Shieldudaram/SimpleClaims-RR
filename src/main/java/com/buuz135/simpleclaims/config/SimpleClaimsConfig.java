@@ -58,6 +58,9 @@ public class SimpleClaimsConfig {
             .append(new KeyedCodec<Boolean>("EXPERIMENTAL-EnableAlloyEntryTesting", Codec.BOOLEAN),
                     (simpleClaimsConfig, value, extraInfo) -> simpleClaimsConfig.EnableAlloyEntryTesting = value,
                     (simpleClaimsConfig, extraInfo) -> simpleClaimsConfig.EnableAlloyEntryTesting).add()
+            .append(new KeyedCodec<Boolean>("EnableParticleBorders", Codec.BOOLEAN),
+                    (simpleClaimsConfig, value, extraInfo) -> simpleClaimsConfig.EnableParticleBorders = value,
+                    (simpleClaimsConfig, extraInfo) -> simpleClaimsConfig.EnableParticleBorders).add()
             .build();
 
     private int DefaultPartyClaimsAmount = 25;
@@ -75,6 +78,7 @@ public class SimpleClaimsConfig {
     private String TitleTopClaimTitleText = "Simple Claims";
     private String[] FullWorldProtection = new String[0];
     private boolean EnableAlloyEntryTesting = false;
+    private boolean EnableParticleBorders = true;
 
     private boolean ForceSimpleClaimsChunkWorldMap = true;
     private boolean CreativeModeBypassProtection = false;
@@ -149,5 +153,9 @@ public class SimpleClaimsConfig {
 
     public boolean isEnableAlloyEntryTesting() {
         return EnableAlloyEntryTesting;
+    }
+
+    public boolean isEnableParticleBorders() {
+        return EnableParticleBorders;
     }
 }

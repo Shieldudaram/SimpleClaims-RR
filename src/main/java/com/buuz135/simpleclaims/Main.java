@@ -7,6 +7,7 @@ import com.buuz135.simpleclaims.config.SimpleClaimsConfig;
 import com.buuz135.simpleclaims.map.SimpleClaimsChunkWorldMap;
 import com.buuz135.simpleclaims.map.SimpleClaimsWorldMapProvider;
 import com.buuz135.simpleclaims.systems.events.*;
+import com.buuz135.simpleclaims.systems.tick.ChunkBordersTickingSystem;
 import com.buuz135.simpleclaims.systems.tick.EntryTickingSystem;
 import com.buuz135.simpleclaims.systems.tick.TitleTickingSystem;
 
@@ -55,6 +56,8 @@ public class Main extends JavaPlugin {
         this.getEntityStoreRegistry().registerSystem(new TitleTickingSystem(CONFIG.get().getTitleTopClaimTitleText()));
         if (CONFIG.get().isEnableAlloyEntryTesting())
             this.getEntityStoreRegistry().registerSystem(new EntryTickingSystem());
+        if (CONFIG.get().isEnableParticleBorders())
+            this.getEntityStoreRegistry().registerSystem(new ChunkBordersTickingSystem());
         this.getEntityStoreRegistry().registerSystem(new CustomDamageEventSystem());
         this.getChunkStoreRegistry().registerSystem(new WorldMapUpdateTickingSystem());
         this.getCommandRegistry().registerCommand(new SimpleClaimProtectCommand());
