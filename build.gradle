@@ -31,6 +31,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
     implementation(files(System.getProperty("user.home") + "/AppData/Roaming/Hytale/install/release/package/game/$game_build/Server/HytaleServer.jar"))
     //implementation 'org.xerial:sqlite-jdbc:3.45.1.0'
+    shadowBundle 'org.slf4j:slf4j-simple:2.0.17'
     shadowBundle 'org.xerial:sqlite-jdbc:3.45.1.0'
 }
 
@@ -69,8 +70,7 @@ idea.project.settings.runConfigurations {
 shadowJar {
     archiveClassifier.set('')
     mergeServiceFiles()
-    relocate 'org.slf4j', 'com.buuz135.simpleclaims.libs.org.slf4j'
-    relocate 'org.sqlite', 'com.buuz135.simpleclaims.libs.org.sqlite'
+
     configurations = [project.configurations.shadowBundle]
 
     manifest {

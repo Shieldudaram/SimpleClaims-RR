@@ -26,7 +26,7 @@ public class DatabaseManager {
         this.logger = logger;
 
         try {
-            Class.forName("com.buuz135.simpleclaims.libs.org.sqlite.JDBC");
+            Class.forName("org.sqlite.JDBC");
         } catch (Exception e) {
             logger.at(Level.SEVERE).log("Couldn't find relocated JDBC driver for SQLite");
         }
