@@ -1,0 +1,29 @@
+errors.simpleclaims.playerNotInParty = Ehhez egy party tagjának kell lenned
+errors.simpleclaims.playerInParty = Már tagja vagy egy partynak
+
+errors.simpleclaims.alreadyClaimedByYou = Ezt a területet már levédte a partyd
+errors.simpleclaims.alreadyClaimedByAnotherPlayer = Ezt a területet már levédte egy másik party
+errors.simpleclaims.notClaimed = Ez a terület nincs levédve
+errors.simpleclaims.notYourClaim = Ez a terület nem a partyd tulajdona
+errors.simpleclaims.notEnoughChunks = A partydnak nincs elég levédhetö területe ehhez
+errors.simpleclaims.playerNotFound = Játékos nem található
+errors.simpleclaims.cantClaimInThisDimension = Ebben a dimenzióban nem lehet területet levédeni
+
+simpleclaims.partyCreated = Party létrehozva
+info.simpleclaims.unclaimed = Terület felszabaditva
+info.simpleclaims.claimed = Terület levédve
+simpleclaims.nowUsingParty = Kiválasztott party: 
+
+errors.simpleclaims.admin.partyNotSelected = Nincs party kiválasztva admin módban
+errors.simpleclaims.admin.partyNotFound = Party nem található
+
+simpleclaims.partyInviteSent = Party meghívó elküldve neki: {username}
+simpleclaims.partyInviteReceived = Meghivást kaptál {username} játékostól a(z) {party_name} partyhoz. Használd a '/scp invite-accept' parancsot a csatlakozáshoz.
+simpleclaims.partyInviteJoined = {username} csatlakozott a(z) {party_name} partyhoz
+simpleclaims.partyInviteSelf = Ez a játékos már tagja a partynak
+simpleclaims.partyLeft = Elhagytad a partyt
+simpleclaims.partyDisbanded = Elhagytad a partyt. Mivel nem maradt több tag, a party feloszlott
+simpleclaims.partyOwnerTransferred = Elhagytad a partyt, a vezetés átkerült hozzá: {username}
+simpleclaims.modifiedMaxChunkAmount = Megváltoztattad a(z) {party_name} party maximális területlimitjét ennyire: {amount}
+simpleclaims.enabledOverride = Adminisztrátori felülbirálás bekapcsolva
+simpleclaims.disabledOverride = Adminisztrátori felülbirálás kikapcsolva
