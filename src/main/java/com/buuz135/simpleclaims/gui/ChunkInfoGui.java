@@ -67,13 +67,13 @@ public class ChunkInfoGui extends InteractiveCustomUIPage<ChunkInfoGui.ChunkInfo
                     }
                     var chunk = ClaimManager.getInstance().getChunk(dimension, x, z);
                     var selectedParty = ClaimManager.getInstance().getPartyById(selectedPartyID);
-                    if (chunk == null && selectedParty != null && ClaimManager.getInstance().hasEnoughClaimsLeft(selectedParty)) {
+                    if ((chunk == null || ClaimManager.getInstance().getPartyById(chunk.getPartyOwner()) == null) && selectedParty != null && ClaimManager.getInstance().hasEnoughClaimsLeft(selectedParty)) {
                         var chunkInfo = ClaimManager.getInstance().claimChunkBy(dimension, x, z, selectedParty, playerInstance, playerRef);
                         ClaimManager.getInstance().queueMapUpdate(playerInstance.getWorld(), x, z);
                     }
                 } else {
                     var chunk = ClaimManager.getInstance().getChunk(dimension, x, z);
-                    if (chunk == null && ClaimManager.getInstance().hasEnoughClaimsLeft(playerParty)) {
+                    if ((chunk == null || ClaimManager.getInstance().getPartyById(chunk.getPartyOwner()) == null) && ClaimManager.getInstance().hasEnoughClaimsLeft(playerParty)) {
                         var chunkInfo = ClaimManager.getInstance().claimChunkBy(dimension, x, z, playerParty, playerInstance, playerRef);
                         ClaimManager.getInstance().queueMapUpdate(playerInstance.getWorld(), x, z);
                     }
@@ -169,6 +169,15 @@ public class ChunkInfoGui extends InteractiveCustomUIPage<ChunkInfoGui.ChunkInfo
                         }
                         uiCommandBuilder.set("#ChunkCards[" + z + "][" + x + "].TooltipTextSpans", tooltip.build());
                         uiEventBuilder.addEventBinding(CustomUIEventBindingType.RightClicking, "#ChunkCards[" + z + "][" + x + "]", EventData.of("Action", "RightClicking:" + (chunkX + x - 8) + ":" + (chunkZ + z - 8)));
+                    } else { // The chunk doesnt have a valid party
+                        var tooltip = MessageHelper.multiLine().append(Message.raw("Wilderness").bold(true).color(Color.GREEN.darker()));
+                        if (playerParty != null) {
+                            tooltip = tooltip.nl().nl().append(Message.raw("*Left Click to claim*").bold(true).color(Color.GRAY));
+                            uiEventBuilder.addEventBinding(CustomUIEventBindingType.Activating, "#ChunkCards[" + z + "][" + x + "]", EventData.of("Action", "LeftClicking:" + (chunkX + x - 8) + ":" + (chunkZ + z - 8)));
+                        } else {
+                            tooltip = tooltip.nl().nl().append(Message.raw("*Create a party to claim*").bold(true).color(Color.GRAY));
+                        }
+                        uiCommandBuilder.set("#ChunkCards[" + z + "][" + x + "].TooltipTextSpans", tooltip.build());
                     }
                 } else {
                     var tooltip = MessageHelper.multiLine().append(Message.raw("Wilderness" ).bold(true).color(Color.GREEN.darker()));

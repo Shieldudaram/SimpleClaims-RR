@@ -46,7 +46,7 @@ public class ClaimChunkCommand extends AbstractAsyncCommand {
                         player.sendMessage(CommandMessages.PARTY_CREATED);
                     }
                     var chunk = ClaimManager.getInstance().getChunkRawCoords(player.getWorld().getName(), (int) playerRef.getTransform().getPosition().getX(), (int) playerRef.getTransform().getPosition().getZ());
-                    if (chunk != null) {
+                    if (chunk != null && ClaimManager.getInstance().getPartyById(chunk.getPartyOwner()) != null) {
                         player.sendMessage(chunk.getPartyOwner().equals(party.getId()) ? CommandMessages.ALREADY_CLAIMED_BY_YOU : CommandMessages.ALREADY_CLAIMED_BY_ANOTHER_PLAYER);
                         return;
                     }
