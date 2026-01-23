@@ -48,9 +48,7 @@ public class BreakBlockEventSystem extends EntityEventSystem<EntityStore, BreakB
     @Nullable
     @Override
     public Query<EntityStore> getQuery() {
-        return Query.any();
-        // normally this, but using Query.any() to try to capture the explosion block break/damage events (doesn't work)
-        // return PlayerRef.getComponentType();
+        return PlayerRef.getComponentType();
     }
 
     @NonNullDecl
