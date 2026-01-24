@@ -21,9 +21,12 @@ public class PlayerChatListener implements Function<CompletableFuture<PlayerChat
             }
 
             final var sender = event.getSender();
-
             final var partyInfo = ClaimManager.getInstance().getPartyFromPlayer(sender.getUuid());
             if (partyInfo == null) return event;
+
+            final var content = event.getContent();
+            final var partyName = partyInfo.getName();
+            event.setContent("[" + partyName + "] " + content);
 
             final var members = ClaimManager.getInstance().getParties().get(partyInfo.getId().toString()).getMembers();
             final List<PlayerRef> targets = new ArrayList<>();
