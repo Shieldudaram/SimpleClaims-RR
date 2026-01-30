@@ -23,19 +23,21 @@ import com.hypixel.hytale.server.core.inventory.container.filter.FilterType;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import io.netty.util.internal.ConcurrentSet;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.hypixel.hytale.builtin.crafting.CraftingPlugin.isValidCraftingMaterialForBench;
 import static com.hypixel.hytale.builtin.crafting.CraftingPlugin.isValidUpgradeMaterialForBench;
 
 public class CraftingUiQuantitiesSystem extends EntityTickingSystem<EntityStore> {
 
-    private final Map<SimpleCraftingWindow, Long> nextAllowedMs = new IdentityHashMap<>();
-    private final Map<SimpleCraftingWindow, Integer> lastHash = new IdentityHashMap<>();
-    private final Set<SimpleCraftingWindow> initialized = Collections.newSetFromMap(new IdentityHashMap<>());
+    private final Map<SimpleCraftingWindow, Long> nextAllowedMs = new ConcurrentHashMap<>();
+    private final Map<SimpleCraftingWindow, Integer> lastHash = new ConcurrentHashMap<>();
+    private final Set<SimpleCraftingWindow> initialized = new ConcurrentSet<>();
 
 
     @Override
@@ -63,7 +65,7 @@ public class CraftingUiQuantitiesSystem extends EntityTickingSystem<EntityStore>
             if (!firstTime) {
                 long allowedAt = nextAllowedMs.getOrDefault(scw, 0L);
                 if (now < allowedAt) continue;
-                nextAllowedMs.put(scw, now + 250L);
+                nextAllowedMs.put(scw, now + 500L);
             }
 
             BenchState benchState = WindowReflection.getBenchState(scw);
@@ -90,7 +92,7 @@ public class CraftingUiQuantitiesSystem extends EntityTickingSystem<EntityStore>
             if (initialized.add(scw)) {
                 WindowReflection.invalidate(scw);
                 // start throttle window after first init
-                nextAllowedMs.put(scw, now + 250L);
+                nextAllowedMs.put(scw, now + 500L);
             }
         }
 

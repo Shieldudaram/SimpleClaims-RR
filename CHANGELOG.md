@@ -1,3 +1,7 @@
+# 1.0.26
+
+* Improved Bench Protection performance, closes #161
+
 # 1.0.25
 
 * Fixed database file being created as a folder
