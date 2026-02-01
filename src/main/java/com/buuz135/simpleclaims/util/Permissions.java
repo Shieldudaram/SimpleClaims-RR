@@ -11,6 +11,7 @@ public class Permissions {
 
     public static final String CLAIM_CHUNK_AMOUNT = "simpleclaims.party.claim_chunk_amount";
     public static final String MAX_ADD_CHUNK_AMOUNT = "simpleclaims.admin.max_add_chunk_amount";
+    public static final String CLAIM_CHUNK_GAIN_MINUTES = "simpleclaims.player.claim_chunk_gain_minutes";
 
     public static int getPermissionClaimAmount(UUID uuid) { //TODO Check of admin parties
         return getIntPermission(uuid, CLAIM_CHUNK_AMOUNT);
@@ -18,6 +19,10 @@ public class Permissions {
 
     public static int getPermissionMaxAddChunkAmount(UUID uuid) {
         return getIntPermission(uuid, MAX_ADD_CHUNK_AMOUNT);
+    }
+
+    public static int getPermissionClaimChunkGainMinutes(UUID uuid) {
+        return getIntPermission(uuid, CLAIM_CHUNK_GAIN_MINUTES);
     }
 
     private static int getIntPermission(UUID uuid, String permissionNode) {

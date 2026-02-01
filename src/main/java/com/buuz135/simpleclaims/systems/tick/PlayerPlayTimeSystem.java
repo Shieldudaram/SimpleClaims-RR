@@ -4,6 +4,7 @@ import com.buuz135.simpleclaims.Main;
 import com.buuz135.simpleclaims.claim.ClaimManager;
 import com.buuz135.simpleclaims.claim.party.PartyOverride;
 import com.buuz135.simpleclaims.claim.party.PartyOverrides;
+import com.buuz135.simpleclaims.util.Permissions;
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Ref;
@@ -29,10 +30,17 @@ public class PlayerPlayTimeSystem extends DelayedEntitySystem<EntityStore> {
         PlayerRef playerRef = store.getComponent(ref, PlayerRef.getComponentType());
         if (playerRef == null) return;
 
+        UUID uuid = playerRef.getUuid();
+
+        var party = ClaimManager.getInstance().getPartyFromPlayer(uuid);
+        if (party == null || !party.isOwner(uuid)) return;
+
         int gainMinutes = Main.CONFIG.get().getClaimChunkGainInMinutes();
+        int permissionGainMinutes = Permissions.getPermissionClaimChunkGainMinutes(uuid);
+        if (permissionGainMinutes > 0) gainMinutes = permissionGainMinutes;
+
         if (gainMinutes <= 0) return;
 
-        UUID uuid = playerRef.getUuid();
         var nameEntry = ClaimManager.getInstance().getPlayerNameTracker().getNamesMap().get(uuid);
         float currentTime = nameEntry != null ? nameEntry.getPlayTime() : 0f;
         currentTime += 60;
@@ -41,20 +49,14 @@ public class PlayerPlayTimeSystem extends DelayedEntitySystem<EntityStore> {
         while (currentTime >= targetSeconds) {
             currentTime -= targetSeconds;
 
-            var party = ClaimManager.getInstance().getPartyFromPlayer(uuid);
-            if (party != null) {
-                int currentMax = party.getMaxClaimAmount();
+            int currentMax = party.getMaxClaimAmount();
+            int maxGain = Main.CONFIG.get().getMaxAddChunkAmount();
 
-
-                if (currentMax < Main.CONFIG.get().getMaxAddChunkAmount()) {
-                    System.out.println("Adding chunk to party " + party.getName());
-                    party.setOverride(new PartyOverride(PartyOverrides.CLAIM_CHUNK_AMOUNT, new PartyOverride.PartyOverrideValue("integer", currentMax + 1)));
-                    ClaimManager.getInstance().saveParty(party);
-                } else {
-                    break; // reached max gain, no point in continuing the loop
-                }
+            if (currentMax < maxGain) {
+                party.setOverride(new PartyOverride(PartyOverrides.CLAIM_CHUNK_AMOUNT, new PartyOverride.PartyOverrideValue("integer", currentMax + 1)));
+                ClaimManager.getInstance().saveParty(party);
             } else {
-                break;
+                break; // reached max gain, no point in continuing the loop
             }
         }
         ClaimManager.getInstance().setPlayerPlayTime(uuid, currentTime);
