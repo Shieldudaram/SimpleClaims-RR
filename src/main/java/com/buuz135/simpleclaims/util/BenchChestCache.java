@@ -11,7 +11,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class BenchChestCache {
-    public static final long DEFAULT_TTL_MS = 250L;
+    public static final long DEFAULT_TTL_MS = 3000L;
 
     private BenchChestCache() {}
 

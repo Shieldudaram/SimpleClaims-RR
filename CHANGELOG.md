@@ -5,6 +5,7 @@
 * Added a config value to change the wilderness text, closes #93
 * Added a permission to limit how many claims a player can have, closes #132
 * Added a permission to increase chunk limit by playtime, closes #46
+* Increased bench cache time
 
 # 1.0.26
 
