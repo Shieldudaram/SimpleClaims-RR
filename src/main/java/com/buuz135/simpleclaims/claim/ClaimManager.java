@@ -36,6 +36,7 @@ public class ClaimManager {
     private final Map<UUID, PartyInvite> partyInvites;
     private final Map<UUID, UUID> playerToParty;
     private final Map<UUID, Integer> partyClaimCounts;
+    private final Map<UUID, UUID> realmRulerTeamParty;
     private Set<String> worldsNeedingUpdates;
     private HytaleLogger logger = HytaleLogger.getLogger().getSubLogger("SimpleClaims");
     private PlayerNameTracker playerNameTracker;
@@ -55,6 +56,7 @@ public class ClaimManager {
         this.partyInvites = new ConcurrentHashMap<>();
         this.playerToParty = new ConcurrentHashMap<>();
         this.partyClaimCounts = new ConcurrentHashMap<>();
+        this.realmRulerTeamParty = new ConcurrentHashMap<>();
         this.parties = new HashMap<>();
         this.chunks = new HashMap<>();
         this.playerNameTracker = new PlayerNameTracker();
@@ -149,7 +151,11 @@ public class ClaimManager {
         // If playerUUID is null (e.g., explosion with unknown source), deny in claimed chunks
         if (playerUUID == null) return false;
 
-        if (chunkParty.isOwnerOrMember(playerUUID) || chunkParty.isPlayerAllied(playerUUID)) {
+        UUID rrTeamParty = realmRulerTeamParty.get(playerUUID);
+        boolean isRealmRulerTeamMember = rrTeamParty != null && rrTeamParty.equals(chunkParty.getId());
+
+        if (chunkParty.isOwnerOrMember(playerUUID) || chunkParty.isPlayerAllied(playerUUID) || isRealmRulerTeamMember) {
+            if (isRealmRulerTeamMember) return true;
             if (chunkParty.hasPermission(playerUUID, permission)) return true;
             return false;
         }
@@ -389,6 +395,24 @@ public class ClaimManager {
 
     public Map<UUID, UUID> getPlayerToParty() {
         return playerToParty;
+    }
+
+    public void setRealmRulerTeamParty(@Nullable UUID playerUuid, @Nullable UUID partyId) {
+        if (playerUuid == null) return;
+        if (partyId == null) {
+            realmRulerTeamParty.remove(playerUuid);
+        } else {
+            realmRulerTeamParty.put(playerUuid, partyId);
+        }
+    }
+
+    public void clearRealmRulerTeamParty(@Nullable UUID playerUuid) {
+        if (playerUuid == null) return;
+        realmRulerTeamParty.remove(playerUuid);
+    }
+
+    public void clearAllRealmRulerTeamParties() {
+        realmRulerTeamParty.clear();
     }
 
     public void disbandInactiveParties() {

@@ -118,6 +118,33 @@ tasks.build {
     dependsOn("shadowJar")
 }
 
+// Copies the built plugin JAR into the user's Hytale mods folder so it loads on next launch.
+// This is the Gradle equivalent of:
+//   cp build/libs/SimpleClaims-*.jar "<hytaleHome>/UserData/Mods"
+def hytaleModsDir = file("$hytaleHome/UserData/Mods")
+
+tasks.register('installToHytaleMods', Copy) {
+    dependsOn tasks.named('shadowJar')
+
+    // Copy only the main plugin jar (not -sources/-javadoc).
+    from(tasks.named('shadowJar').flatMap { it.archiveFile })
+    into(hytaleModsDir)
+
+    doFirst {
+        if (!file(hytaleHome).exists()) {
+            throw new GradleException("Failed to find Hytale at the expected location. Currently looking in ${hytaleHome}")
+        }
+        if (!hytaleModsDir.exists()) {
+            hytaleModsDir.mkdirs()
+        }
+    }
+}
+
+// Run install automatically after a local build so you don't forget to copy the jar.
+tasks.named('build') {
+    finalizedBy 'installToHytaleMods'
+}
+
 
 publishing {
     publications {

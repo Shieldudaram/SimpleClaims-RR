@@ -5,6 +5,8 @@ import com.buuz135.simpleclaims.claim.ClaimManager;
 import com.buuz135.simpleclaims.commands.SimpleClaimProtectCommand;
 import com.buuz135.simpleclaims.commands.SimpleClaimsPartyCommand;
 import com.buuz135.simpleclaims.config.SimpleClaimsConfig;
+import com.buuz135.simpleclaims.ctf.CtfTeam;
+import com.buuz135.simpleclaims.ctf.CtfTeamParties;
 import com.buuz135.simpleclaims.interactions.ClaimCycleBlockGroupInteraction;
 import com.buuz135.simpleclaims.interactions.ClaimPickupBucketInteraction;
 import com.buuz135.simpleclaims.interactions.ClaimPlaceBucketInteraction;
@@ -31,6 +33,7 @@ import dev.unnm3d.codeclib.config.CodecFactory;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import java.util.logging.Level;
+import java.util.UUID;
 
 
 public class Main extends JavaPlugin {
@@ -122,4 +125,32 @@ public class Main extends JavaPlugin {
         WindowPacketAdapters.uninstall();
     }
 
+    // -------------------------------------------------------------------------
+    // Realm Ruler integration (reflection API)
+    // -------------------------------------------------------------------------
+
+    public void rrEnsureCtfTeamParties() {
+        CtfTeamParties.ensureTeamParty(CtfTeam.RED);
+        CtfTeamParties.ensureTeamParty(CtfTeam.BLUE);
+        CtfTeamParties.ensureTeamParty(CtfTeam.YELLOW);
+        CtfTeamParties.ensureTeamParty(CtfTeam.WHITE);
+    }
+
+    public boolean rrSetPlayerCtfTeam(UUID playerUuid, String team) {
+        if (playerUuid == null) return false;
+        CtfTeam parsed = CtfTeam.fromString(team);
+        if (parsed == null) return false;
+        var party = CtfTeamParties.ensureTeamParty(parsed);
+        if (party == null) return false;
+        ClaimManager.getInstance().setRealmRulerTeamParty(playerUuid, party.getId());
+        return true;
+    }
+
+    public void rrClearPlayerCtfTeam(UUID playerUuid) {
+        ClaimManager.getInstance().clearRealmRulerTeamParty(playerUuid);
+    }
+
+    public void rrClearAllCtfTeams() {
+        ClaimManager.getInstance().clearAllRealmRulerTeamParties();
+    }
 }

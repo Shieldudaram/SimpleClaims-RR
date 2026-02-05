@@ -7,6 +7,8 @@ import com.buuz135.simpleclaims.commands.subcommand.chunk.UnclaimChunkCommand;
 import com.buuz135.simpleclaims.commands.subcommand.chunk.op.OpChunkGuiCommand;
 import com.buuz135.simpleclaims.commands.subcommand.chunk.op.OpClaimChunkCommand;
 import com.buuz135.simpleclaims.commands.subcommand.chunk.op.OpUnclaimChunkCommand;
+import com.buuz135.simpleclaims.commands.subcommand.chunk.op.CtfTeamClaimGuiCommand;
+import com.buuz135.simpleclaims.ctf.CtfTeam;
 import com.buuz135.simpleclaims.gui.ChunkInfoGui;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
@@ -38,6 +40,11 @@ public class SimpleClaimProtectCommand extends AbstractAsyncCommand {
         this.addSubCommand(new OpClaimChunkCommand());
         this.addSubCommand(new OpUnclaimChunkCommand());
         this.addSubCommand(new OpChunkGuiCommand());
+
+        this.addSubCommand(new CtfTeamClaimGuiCommand(CtfTeam.RED));
+        this.addSubCommand(new CtfTeamClaimGuiCommand(CtfTeam.BLUE));
+        this.addSubCommand(new CtfTeamClaimGuiCommand(CtfTeam.YELLOW));
+        this.addSubCommand(new CtfTeamClaimGuiCommand(CtfTeam.WHITE));
     }
 
     @NonNullDecl
