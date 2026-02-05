@@ -17,6 +17,8 @@ import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;
 
+import com.buuz135.simpleclaims.ctf.CtfTeamSpawn;
+
 public class DatabaseManager {
 
     private final HytaleLogger logger;
@@ -124,6 +126,14 @@ public class DatabaseManager {
                     "value INTEGER," +
                     "PRIMARY KEY (party_id, target_uuid, permission)," +
                     "FOREIGN KEY (party_id) REFERENCES parties(id) ON DELETE CASCADE" +
+                    ")");
+
+            statement.execute("CREATE TABLE IF NOT EXISTS ctf_team_spawns (" +
+                    "team TEXT PRIMARY KEY," +
+                    "dimension TEXT NOT NULL," +
+                    "x REAL NOT NULL," +
+                    "y REAL NOT NULL," +
+                    "z REAL NOT NULL" +
                     ")");
 
             addColumnIfNotExists("name_cache", "last_seen", "INTEGER DEFAULT " + System.currentTimeMillis());
@@ -537,5 +547,42 @@ public class DatabaseManager {
             e.printStackTrace();
         }
         return overrides;
+    }
+
+    public void saveCtfTeamSpawn(String teamKey, String dimension, double x, double y, double z) {
+        if (teamKey == null || teamKey.isBlank()) return;
+        if (dimension == null || dimension.isBlank()) return;
+        try (PreparedStatement ps = connection.prepareStatement(
+                "REPLACE INTO ctf_team_spawns (team, dimension, x, y, z) VALUES (?, ?, ?, ?, ?)"
+        )) {
+            ps.setString(1, teamKey);
+            ps.setString(2, dimension);
+            ps.setDouble(3, x);
+            ps.setDouble(4, y);
+            ps.setDouble(5, z);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Map<String, CtfTeamSpawn> loadCtfTeamSpawns() {
+        Map<String, CtfTeamSpawn> spawns = new HashMap<>();
+        try (Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery("SELECT * FROM ctf_team_spawns")) {
+            while (rs.next()) {
+                String team = rs.getString("team");
+                if (team == null || team.isBlank()) continue;
+                spawns.put(team, new CtfTeamSpawn(
+                        rs.getString("dimension"),
+                        rs.getDouble("x"),
+                        rs.getDouble("y"),
+                        rs.getDouble("z")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return spawns;
     }
 }

@@ -32,6 +32,8 @@ import com.hypixel.hytale.server.core.util.Config;
 import dev.unnm3d.codeclib.config.CodecFactory;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.UUID;
 
@@ -152,5 +154,19 @@ public class Main extends JavaPlugin {
 
     public void rrClearAllCtfTeams() {
         ClaimManager.getInstance().clearAllRealmRulerTeamParties();
+    }
+
+    public Map<String, Object> rrGetCtfTeamSpawn(String team) {
+        CtfTeam parsed = CtfTeam.fromString(team);
+        if (parsed == null) return null;
+        var spawn = ClaimManager.getInstance().getCtfTeamSpawn(parsed);
+        if (spawn == null) return null;
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("world", spawn.dimension());
+        data.put("x", spawn.x());
+        data.put("y", spawn.y());
+        data.put("z", spawn.z());
+        return data;
     }
 }

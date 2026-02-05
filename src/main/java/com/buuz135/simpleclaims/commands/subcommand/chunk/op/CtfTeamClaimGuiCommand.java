@@ -32,6 +32,7 @@ public class CtfTeamClaimGuiCommand extends AbstractAsyncCommand {
         super(team == null ? "ctf-team" : team.displayName().toLowerCase(Locale.ROOT), "Selects a CTF team party and opens the admin claim gui");
         this.team = team;
         this.requirePermission(CommandMessages.ADMIN_PERM + "admin-chunk");
+        this.addSubCommand(new CtfTeamSpawnCommand(team));
     }
 
     @NonNullDecl

@@ -3,6 +3,8 @@ package com.buuz135.simpleclaims.claim;
 import com.buuz135.simpleclaims.Main;
 import com.buuz135.simpleclaims.claim.party.PartyInvite;
 import com.buuz135.simpleclaims.commands.CommandMessages;
+import com.buuz135.simpleclaims.ctf.CtfTeam;
+import com.buuz135.simpleclaims.ctf.CtfTeamSpawn;
 import com.buuz135.simpleclaims.files.*;
 import com.buuz135.simpleclaims.util.FileUtils;
 import com.buuz135.simpleclaims.claim.chunk.ChunkInfo;
@@ -27,6 +29,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.logging.Level;
+import java.util.Locale;
 
 public class ClaimManager {
 
@@ -37,6 +40,7 @@ public class ClaimManager {
     private final Map<UUID, UUID> playerToParty;
     private final Map<UUID, Integer> partyClaimCounts;
     private final Map<UUID, UUID> realmRulerTeamParty;
+    private final Map<CtfTeam, CtfTeamSpawn> ctfTeamSpawns;
     private Set<String> worldsNeedingUpdates;
     private HytaleLogger logger = HytaleLogger.getLogger().getSubLogger("SimpleClaims");
     private PlayerNameTracker playerNameTracker;
@@ -57,6 +61,7 @@ public class ClaimManager {
         this.playerToParty = new ConcurrentHashMap<>();
         this.partyClaimCounts = new ConcurrentHashMap<>();
         this.realmRulerTeamParty = new ConcurrentHashMap<>();
+        this.ctfTeamSpawns = new ConcurrentHashMap<>();
         this.parties = new HashMap<>();
         this.chunks = new HashMap<>();
         this.playerNameTracker = new PlayerNameTracker();
@@ -115,6 +120,19 @@ public class ClaimManager {
 
         logger.at(Level.INFO).log("Loading admin overrides data from DB...");
         this.adminOverrides.addAll(this.databaseManager.loadAdminOverrides());
+
+        logger.at(Level.INFO).log("Loading CTF team spawns from DB...");
+        try {
+            var loaded = this.databaseManager.loadCtfTeamSpawns();
+            for (Map.Entry<String, CtfTeamSpawn> e : loaded.entrySet()) {
+                if (e.getKey() == null || e.getValue() == null) continue;
+                CtfTeam team = CtfTeam.fromString(e.getKey());
+                if (team == null) continue;
+                this.ctfTeamSpawns.put(team, e.getValue());
+            }
+        } catch (Throwable t) {
+            logger.at(Level.WARNING).withCause(t).log("Failed to load CTF team spawns from DB");
+        }
 
     }
 
@@ -413,6 +431,18 @@ public class ClaimManager {
 
     public void clearAllRealmRulerTeamParties() {
         realmRulerTeamParty.clear();
+    }
+
+    @Nullable
+    public CtfTeamSpawn getCtfTeamSpawn(@Nullable CtfTeam team) {
+        if (team == null) return null;
+        return ctfTeamSpawns.get(team);
+    }
+
+    public void setCtfTeamSpawn(@Nullable CtfTeam team, @Nullable CtfTeamSpawn spawn) {
+        if (team == null || spawn == null) return;
+        ctfTeamSpawns.put(team, spawn);
+        this.databaseManager.saveCtfTeamSpawn(team.name().toLowerCase(Locale.ROOT), spawn.dimension(), spawn.x(), spawn.y(), spawn.z());
     }
 
     public void disbandInactiveParties() {
