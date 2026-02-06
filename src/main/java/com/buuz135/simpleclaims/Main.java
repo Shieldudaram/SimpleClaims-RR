@@ -169,4 +169,22 @@ public class Main extends JavaPlugin {
         data.put("z", spawn.z());
         return data;
     }
+
+    public String rrGetCtfTeamForChunk(String dimension, int chunkX, int chunkZ) {
+        if (dimension == null || dimension.isBlank()) return null;
+
+        var chunk = ClaimManager.getInstance().getChunk(dimension, chunkX, chunkZ);
+        if (chunk == null) return null;
+
+        UUID owner = chunk.getPartyOwner();
+        if (owner == null) return null;
+
+        for (CtfTeam team : CtfTeam.values()) {
+            var party = CtfTeamParties.ensureTeamParty(team);
+            if (party != null && owner.equals(party.getId())) {
+                return team.displayName();
+            }
+        }
+        return null;
+    }
 }
