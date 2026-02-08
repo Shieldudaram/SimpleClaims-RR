@@ -20,6 +20,26 @@ I'm open to feedback and suggestions on my discord
 
 ## <span style="color:#e03e2d">Warning: Currently there is no way to cancel interactions from items like the hammer. Waiting on support from the Hytale team.</span>
 
+## Responsibility Matrix (SimpleClaims vs RealmRuler)
+
+| Area | Primary Owner | Notes |
+| --- | --- | --- |
+| Chunk protection (break/place/interact) | SimpleClaims | Enforced by claim event systems in this mod. |
+| PvP and friendly-fire rules in claims | SimpleClaims | Enforced by `CustomDamageEventSystem` and party overrides. |
+| CTF team-to-player assignment | RealmRuler (orchestrates), SimpleClaims (stores/enforces) | RealmRuler calls `rrSetPlayerCtfTeam`/clear methods; SimpleClaims enforces combat outcomes. |
+| CTF team party reconciliation | SimpleClaims | Triggered on startup and via `rrEnsureCtfTeamParties`. |
+| CTF chunk ownership lookup | SimpleClaims | Exposed to RealmRuler through `rrGetCtfTeamForChunk`. |
+
+## Testing Boundary (Recommended Order)
+
+1. **SimpleClaims-only checks first**
+   - Assign a claimed chunk to yourself and validate break/place/interact permissions.
+   - Assign a chunk to another team and validate the same protections.
+   - Validate PvP behavior (same team and enemy team) inside claimed chunks.
+2. **RealmRuler integration checks second**
+   - Validate RealmRuler can set/clear CTF teams through the `rr*` bridge methods.
+   - Re-run CTF combat checks to confirm bridge-driven team assignment still matches expected SimpleClaims enforcement.
+
 ## Commands
 
 There is 2 main commands in the mod simpleclaims (aliases: sc, sc-chunks, scc) and simpleclaimsparty (aliases: scp,

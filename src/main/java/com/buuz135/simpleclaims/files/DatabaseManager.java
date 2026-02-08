@@ -30,7 +30,7 @@ public class DatabaseManager {
         try {
             Class.forName("org.sqlite.JDBC");
         } catch (Exception e) {
-            logger.at(Level.SEVERE).log("Couldn't find relocated JDBC driver for SQLite");
+            logger.at(Level.SEVERE).withCause(e).log("Couldn't find relocated JDBC driver for SQLite");
         }
         FileUtils.ensureMainDirectory();
         try {
@@ -46,8 +46,7 @@ public class DatabaseManager {
             }
             createTables();
         } catch (Exception e) {
-            logger.at(Level.SEVERE).log("Error initializing database: " + e.getMessage());
-            e.printStackTrace();
+            logger.at(Level.SEVERE).withCause(e).log("Error initializing database: " + e.getMessage());
         }
     }
 
@@ -219,10 +218,9 @@ public class DatabaseManager {
             try {
                 connection.rollback();
             } catch (SQLException ex) {
-                ex.printStackTrace();
+                logger.at(Level.SEVERE).withCause(ex).log("Migration rollback failed");
             }
-            logger.at(Level.SEVERE).log("Migration failed: " + e.getMessage());
-            e.printStackTrace();
+            logger.at(Level.SEVERE).withCause(e).log("Migration failed: " + e.getMessage());
         }
     }
 
@@ -334,7 +332,7 @@ public class DatabaseManager {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.at(Level.SEVERE).withCause(e).log("Failed to save party: " + party.getId());
         }
     }
 
@@ -347,7 +345,7 @@ public class DatabaseManager {
             // Cascading deletes should handle others if foreign keys are working, 
             // but SQLite requires PRAGMA foreign_keys = ON;
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.at(Level.SEVERE).withCause(e).log("Failed to delete party: " + partyId);
         }
     }
 
@@ -438,7 +436,7 @@ public class DatabaseManager {
                 parties.put(id.toString(), party);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.at(Level.SEVERE).withCause(e).log("Failed to load parties");
         }
         return parties;
     }
@@ -454,7 +452,7 @@ public class DatabaseManager {
             ps.setString(7, chunk.getCreatedTracked().getDate());
             ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.at(Level.SEVERE).withCause(e).log("Failed to save claim: " + dimension + " " + chunk.getChunkX() + "," + chunk.getChunkZ());
         }
     }
 
@@ -465,7 +463,7 @@ public class DatabaseManager {
             ps.setInt(3, chunkZ);
             ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.at(Level.SEVERE).withCause(e).log("Failed to delete claim: " + dimension + " " + chunkX + "," + chunkZ);
         }
     }
 
@@ -488,7 +486,7 @@ public class DatabaseManager {
                 claims.computeIfAbsent(dimension, k -> new HashMap<>()).put(ChunkInfo.formatCoordinates(chunk.getChunkX(), chunk.getChunkZ()), chunk);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.at(Level.SEVERE).withCause(e).log("Failed to load claims");
         }
         return claims;
     }
@@ -501,7 +499,7 @@ public class DatabaseManager {
             ps.setFloat(4, playTime);
             ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.at(Level.SEVERE).withCause(e).log("Failed to save name cache for uuid: " + uuid);
         }
     }
 
@@ -513,7 +511,7 @@ public class DatabaseManager {
                 tracker.setPlayerName(UUID.fromString(rs.getString("uuid")), rs.getString("name"), rs.getLong("last_seen"), rs.getFloat("play_time"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.at(Level.SEVERE).withCause(e).log("Failed to load name cache");
         }
         return tracker;
     }
@@ -523,7 +521,7 @@ public class DatabaseManager {
             ps.setString(1, uuid.toString());
             ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.at(Level.SEVERE).withCause(e).log("Failed to save admin override for uuid: " + uuid);
         }
     }
 
@@ -532,7 +530,7 @@ public class DatabaseManager {
             ps.setString(1, uuid.toString());
             ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.at(Level.SEVERE).withCause(e).log("Failed to delete admin override for uuid: " + uuid);
         }
     }
 
@@ -544,7 +542,7 @@ public class DatabaseManager {
                 overrides.add(UUID.fromString(rs.getString("uuid")));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.at(Level.SEVERE).withCause(e).log("Failed to load admin overrides");
         }
         return overrides;
     }
@@ -562,7 +560,7 @@ public class DatabaseManager {
             ps.setDouble(5, z);
             ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.at(Level.SEVERE).withCause(e).log("Failed to save CTF team spawn for team: " + teamKey);
         }
     }
 
@@ -581,7 +579,7 @@ public class DatabaseManager {
                 ));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.at(Level.SEVERE).withCause(e).log("Failed to load CTF team spawns");
         }
         return spawns;
     }

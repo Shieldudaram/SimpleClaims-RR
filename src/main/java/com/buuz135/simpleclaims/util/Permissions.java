@@ -13,7 +13,7 @@ public class Permissions {
     public static final String MAX_ADD_CHUNK_AMOUNT = "simpleclaims.admin.max_add_chunk_amount";
     public static final String CLAIM_CHUNK_GAIN_MINUTES = "simpleclaims.player.claim_chunk_gain_minutes";
 
-    public static int getPermissionClaimAmount(UUID uuid) { //TODO Check of admin parties
+    public static int getPermissionClaimAmount(UUID uuid) {
         return getIntPermission(uuid, CLAIM_CHUNK_AMOUNT);
     }
 

@@ -15,6 +15,7 @@ import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
 import com.hypixel.hytale.server.core.Message;
@@ -32,8 +33,11 @@ import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class PartyInfoEditGui extends InteractiveCustomUIPage<PartyInfoEditGui.PartyInfoData> {
+
+    private static final HytaleLogger LOGGER = HytaleLogger.getLogger().getSubLogger("SimpleClaims");
 
     private final PartyInfo info;
     private String name;
@@ -56,7 +60,7 @@ public class PartyInfoEditGui extends InteractiveCustomUIPage<PartyInfoEditGui.P
     public void handleDataEvent(@NonNullDecl Ref<EntityStore> ref, @NonNullDecl Store<EntityStore> store, @NonNullDecl PartyInfoData data) {
         super.handleDataEvent(ref, store, data);
         var player = store.getComponent(ref, Player.getComponentType());
-        var playerCanModify = this.info.isOwner(playerRef.getUuid()) || this.isOpEdit || this.info.hasPermission(player.getUuid(), PartyOverrides.PARTY_PROTECTION_MODIFY_INFO);
+        var playerCanModify = this.info.isOwner(playerRef.getUuid()) || this.isOpEdit || this.info.hasPermission(playerRef.getUuid(), PartyOverrides.PARTY_PROTECTION_MODIFY_INFO);
         if (!playerCanModify) {
             UICommandBuilder commandBuilder = new UICommandBuilder();
             UIEventBuilder eventBuilder = new UIEventBuilder();
@@ -151,7 +155,7 @@ public class PartyInfoEditGui extends InteractiveCustomUIPage<PartyInfoEditGui.P
             try {
                 this.info.setColor(0xFF000000 | Integer.parseInt(data.claimColor.substring(1,7), 16));
             } catch (NumberFormatException e) {
-                System.out.println("Invalid color");
+                LOGGER.at(Level.WARNING).withCause(e).log("Invalid claim color selected in party edit UI");
             }
         }
         if (data.inviteDropdown != null) {

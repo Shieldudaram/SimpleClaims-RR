@@ -11,6 +11,7 @@ import com.hypixel.hytale.protocol.packets.setup.RequestCommonAssetsRebuild;
 import com.hypixel.hytale.server.core.asset.common.CommonAsset;
 import com.hypixel.hytale.server.core.asset.common.CommonAssetRegistry;
 import com.hypixel.hytale.server.core.io.PacketHandler;
+import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.worldmap.provider.chunk.ChunkWorldMap;
@@ -21,6 +22,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
 
 /*
 This will generate a map image for the chunks requested, combining them into a single PNG image.
@@ -34,6 +36,7 @@ public class ChunkInfoMapAsset extends CommonAsset {
     // "Buuz135_SimpleClaims" in hex padded with 2 zeros at the start and then padded to 64 characters at the end
     private static final String HASH = "004275757a3133355f53696d706c65436c61696d730000000000000000000000";
     private static final String PATH = "UI/Custom/SimpleClaims/Map.png";
+    private static final HytaleLogger LOGGER = HytaleLogger.getLogger().getSubLogger("SimpleClaims");
 
     private final byte[] data;
 
@@ -82,11 +85,11 @@ public class ChunkInfoMapAsset extends CommonAsset {
                         var height = chunkImage.height;
 
                         if (pixels == null) {
-                            System.out.println("Chunk image data is null for chunk: " + x + ", " + z);
+                            LOGGER.at(Level.WARNING).log("Chunk image data is null for chunk: " + x + ", " + z);
                             continue;
                         }
                         if (width != partSize || height != partSize) {
-                            System.out.println("Chunk image size mismatch: " + width + "x" + height);
+                            LOGGER.at(Level.WARNING).log("Chunk image size mismatch: " + width + "x" + height);
                             continue;
                         }
 

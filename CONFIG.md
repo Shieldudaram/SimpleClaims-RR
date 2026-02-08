@@ -2,6 +2,21 @@
 
 This document explains all the configuration options available in the `SimpleClaims` mod.
 
+## Integration Ownership and Test Scope
+
+Use this matrix when validating behavior across SimpleClaims and RealmRuler integrations.
+
+| Concern | Owner | Validation Scope |
+| --- | --- | --- |
+| Block break/place/interact claim protection | SimpleClaims | Validate directly in SimpleClaims first. |
+| PvP and friendly-fire enforcement in claims | SimpleClaims | Validate directly in SimpleClaims first. |
+| CTF team assignment lifecycle | RealmRuler via SimpleClaims bridge | Validate after core SimpleClaims checks. |
+| `rr*` bridge method contract | Shared contract (do not rename/remove in SimpleClaims) | Validate with RealmRuler integration run. |
+
+Recommended validation order:
+1. Run SimpleClaims-only checks (claim assignment + block protection + PvP behavior).
+2. Run integration checks with RealmRuler (team assignment/clear, then repeat CTF combat checks).
+
 ## Default Party Settings
 
 These settings define the initial permissions and limits for newly created parties.

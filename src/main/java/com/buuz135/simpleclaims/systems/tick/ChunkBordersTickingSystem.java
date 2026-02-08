@@ -9,17 +9,12 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.spatial.SpatialResource;
-import com.hypixel.hytale.component.system.DelayedSystem;
 import com.hypixel.hytale.component.system.tick.DelayedEntitySystem;
-import com.hypixel.hytale.component.system.tick.EntityTickingSystem;
 import com.hypixel.hytale.math.util.ChunkUtil;
-import com.hypixel.hytale.math.vector.Transform;
 import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.protocol.Color;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.EntityModule;
-import com.hypixel.hytale.server.core.modules.entity.teleport.Teleport;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.ParticleUtil;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
@@ -27,13 +22,7 @@ import it.unimi.dsi.fastutil.objects.ObjectList;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-import java.awt.*;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class ChunkBordersTickingSystem extends DelayedEntitySystem<EntityStore> {
 
@@ -91,7 +80,7 @@ public class ChunkBordersTickingSystem extends DelayedEntitySystem<EntityStore> 
         double threshold = 5.0;
         double playerY = playerPos.getY();
         var particleName = "Buuz135_SimpleClaims_Spawn";
-        SpatialResource<Ref<EntityStore>, EntityStore> playerSpatialResource = (SpatialResource) store.getResource(EntityModule.get().getPlayerSpatialResourceType());
+        SpatialResource<Ref<EntityStore>, EntityStore> playerSpatialResource = getPlayerSpatialResource(store);
         int colorInt = partyInfo.getColor();
         Color particleColor = new Color((byte) ((colorInt >> 16) & 0xFF), (byte) ((colorInt >> 8) & 0xFF), (byte) (colorInt & 0xFF));
         if (Math.abs(playerPos.getX() - minX) < threshold) {
@@ -158,6 +147,11 @@ public class ChunkBordersTickingSystem extends DelayedEntitySystem<EntityStore> 
 
     private double randomOffset() {
         return (random.nextDouble() - 0.5);
+    }
+
+    @SuppressWarnings("unchecked")
+    private SpatialResource<Ref<EntityStore>, EntityStore> getPlayerSpatialResource(Store<EntityStore> store) {
+        return (SpatialResource<Ref<EntityStore>, EntityStore>) store.getResource(EntityModule.get().getPlayerSpatialResourceType());
     }
 
 
