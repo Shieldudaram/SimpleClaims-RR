@@ -80,6 +80,7 @@ public class Main extends JavaPlugin {
 
         WindowPacketAdapters.install();
         ClaimManager.getInstance();
+        CtfTeamParties.reconcileTeamParties();
 
         this.getEventRegistry().registerGlobal(AddWorldEvent.class, (event) -> {
             this.getLogger().at(Level.INFO).log("Registered world: " + event.getWorld().getName());
@@ -124,6 +125,10 @@ public class Main extends JavaPlugin {
     @Override
     protected void shutdown() {
         super.shutdown();
+        if (partyInactivityTickingSystem != null) {
+            partyInactivityTickingSystem.stopThread();
+            partyInactivityTickingSystem = null;
+        }
         WindowPacketAdapters.uninstall();
     }
 
@@ -132,10 +137,7 @@ public class Main extends JavaPlugin {
     // -------------------------------------------------------------------------
 
     public void rrEnsureCtfTeamParties() {
-        CtfTeamParties.ensureTeamParty(CtfTeam.RED);
-        CtfTeamParties.ensureTeamParty(CtfTeam.BLUE);
-        CtfTeamParties.ensureTeamParty(CtfTeam.YELLOW);
-        CtfTeamParties.ensureTeamParty(CtfTeam.WHITE);
+        CtfTeamParties.reconcileTeamParties();
     }
 
     public boolean rrSetPlayerCtfTeam(UUID playerUuid, String team) {

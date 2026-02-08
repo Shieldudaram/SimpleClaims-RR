@@ -14,8 +14,16 @@ import java.util.UUID;
 public final class CtfTeamParties {
 
     public static final int MIN_TEAM_CLAIM_LIMIT = 100;
+    public static final boolean TEAM_PVP_ENABLED = true;
+    public static final boolean TEAM_FRIENDLY_FIRE_ENABLED = false;
 
     private CtfTeamParties() {
+    }
+
+    public static void reconcileTeamParties() {
+        for (CtfTeam team : CtfTeam.values()) {
+            ensureTeamParty(team);
+        }
     }
 
     public static PartyInfo ensureTeamParty(CtfTeam team) {
@@ -42,6 +50,7 @@ public final class CtfTeamParties {
         }
 
         ensureClaimLimitAtLeast(party, MIN_TEAM_CLAIM_LIMIT);
+        ensureCombatDefaults(party);
         ClaimManager.getInstance().saveParty(party);
         return party;
     }
@@ -62,6 +71,18 @@ public final class CtfTeamParties {
         party.setOverride(new PartyOverride(
                 PartyOverrides.CLAIM_CHUNK_AMOUNT,
                 new PartyOverride.PartyOverrideValue("integer", min)
+        ));
+    }
+
+    private static void ensureCombatDefaults(PartyInfo party) {
+        if (party == null) return;
+        party.setOverride(new PartyOverride(
+                PartyOverrides.PARTY_PROTECTION_PVP,
+                new PartyOverride.PartyOverrideValue("bool", TEAM_PVP_ENABLED)
+        ));
+        party.setOverride(new PartyOverride(
+                PartyOverrides.PARTY_PROTECTION_FRIENDLY_FIRE,
+                new PartyOverride.PartyOverrideValue("bool", TEAM_FRIENDLY_FIRE_ENABLED)
         ));
     }
 }
