@@ -4,7 +4,7 @@ import com.buuz135.simpleclaims.claim.ClaimManager;
 
 public class PartyInactivityThread extends Thread {
 
-    private boolean running = true;
+    private volatile boolean running = true;
 
     public PartyInactivityThread() {
         this.setName("PartyInactivityTickingSystem");
@@ -13,23 +13,28 @@ public class PartyInactivityThread extends Thread {
 
     @Override
     public void run() {
-        try {
-            Thread.sleep(30 * 1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        if (!sleepInterruptibly(30 * 1000L)) return;
+
         while (running) {
-            try {
-                ClaimManager.getInstance().disbandInactiveParties();
-                Thread.sleep(10 * 60 * 1000); // Every 10 min
-            } catch (InterruptedException e) {
-                running = false;
-            }
+            ClaimManager.getInstance().disbandInactiveParties();
+            if (!sleepInterruptibly(10 * 60 * 1000L)) return; // Every 10 min
         }
     }
 
     public void stopThread() {
+        if (!running) return;
         running = false;
         this.interrupt();
+    }
+
+    private boolean sleepInterruptibly(long millis) {
+        try {
+            Thread.sleep(millis);
+            return running;
+        } catch (InterruptedException ignored) {
+            running = false;
+            Thread.currentThread().interrupt();
+            return false;
+        }
     }
 }
