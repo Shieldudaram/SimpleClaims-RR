@@ -43,3 +43,13 @@ bin/
 .DS_Store
 
 run/
+
+### Local Hytale runtime ###
+.cache/
+bans.json
+config.json
+logs/
+mods/
+permissions.json
+universe/
+whitelist.json
