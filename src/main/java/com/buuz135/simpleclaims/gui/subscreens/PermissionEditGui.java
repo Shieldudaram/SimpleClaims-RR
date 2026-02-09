@@ -67,7 +67,9 @@ public class PermissionEditGui extends GuiWithParent<PermissionEditGui.Permissio
             if (permission != null) {
                 boolean currentValue = this.partyInfo.hasPermission(this.targetUuid, permission) || this.partyInfo.hasPartyPermission(this.targetUuid, permission);
                 this.partyInfo.setPermission(this.targetUuid, permission, !currentValue);
+                long time = System.currentTimeMillis();
                 ClaimManager.getInstance().saveParty(this.partyInfo);
+                System.out.println("Saved party at " + (System.currentTimeMillis() - time));
             }
 
             UICommandBuilder commandBuilder = new UICommandBuilder();
