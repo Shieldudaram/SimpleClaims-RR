@@ -1,3 +1,7 @@
+# 1.0.28
+
+* Changed database saving to be async for performance reasons, closes #176
+
 # 1.0.27
 
 * Added a config option to limit how many claims a player can have, closes #132

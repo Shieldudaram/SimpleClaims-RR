@@ -82,7 +82,7 @@ These settings control whether party owners are allowed to change specific permi
 
 Global settings that affect claiming and protection across the server.
 
-- **WorldClaimBlacklist** (String Array, Default: `[]`): A list of world names where claiming chunks is disabled.
+- **WorldNameBlacklistForClaiming** (String Array, Default: `[]`): A list of world names where claiming chunks is disabled.
 - **FullWorldProtection** (String Array, Default: `[]`): A list of world names where the entire world is protected as if
   it were claimed.
 - **TitleTopClaimTitleText** (String, Default: `"Simple Claims"`): The text displayed at the top of the claim UI.
