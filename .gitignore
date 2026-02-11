@@ -53,3 +53,4 @@ mods/
 permissions.json
 universe/
 whitelist.json
+.rr_assist/
