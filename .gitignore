@@ -4,6 +4,10 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 .kotlin
+run/
+.env
+.rr_assist/
+.rr_assist_global/
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
@@ -42,8 +46,6 @@ bin/
 ### Mac OS ###
 .DS_Store
 
-run/
-
 ### Local Hytale runtime ###
 .cache/
 bans.json
@@ -53,4 +55,3 @@ mods/
 permissions.json
 universe/
 whitelist.json
-.rr_assist/
